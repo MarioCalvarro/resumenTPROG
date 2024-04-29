@@ -1,3 +1,12 @@
+---
+title: "Resumen Teoría de la Programación"
+author: "Mario Calvarro"
+header-includes:
+   - \usepackage{stmaryrd}
+output:
+    pdf_document
+---
+
 # Tema 1. El lenguaje WHILE
 ## Índice
 [[toc]]
