@@ -1,12 +1,3 @@
----
-title: "Resumen Teoría de la Programación"
-author: "Mario Calvarro"
-header-includes:
-   - \usepackage{stmaryrd}
-output:
-    pdf_document
----
-
 # Tema 1. El lenguaje WHILE
 ## Índice
 [[toc]]
@@ -26,15 +17,9 @@ Siendo la sintaxis:
 
 La función semántica es:
 
-$$\require{stmaryrd} \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z} $$
+$$ \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z} $$
 
-$$ \mathcal{N}\llbracket 0 \rrbracket = 0$$
-
-$$ \mathcal{N}\llbracket 1 \rrbracket = 1$$
-
-$$ \mathcal{N}\llbracket n\ 0 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket$$
-
-$$ \mathcal{N}\llbracket n\ 1 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket + 1$$
+$$ \mathcal{N}\llbracket 0 \rrbracket = 0\\ \mathcal{N}\llbracket 1 \rrbracket = 1\\ \mathcal{N}\llbracket n\ 0 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket\\ \mathcal{N}\llbracket n\ 1 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket + 1 $$
 
 ### Composición
 Definiciones composicionales
