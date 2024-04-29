@@ -28,7 +28,13 @@ La función semántica es:
 
 $$ \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z} $$
 
-$$ \mathcal{N}\llbracket 0 \rrbracket = 0\\ \mathcal{N}\llbracket 1 \rrbracket = 1\\ \mathcal{N}\llbracket n\ 0 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket\\ \mathcal{N}\llbracket n\ 1 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket + 1 $$
+$$ \mathcal{N}\llbracket 0 \rrbracket = 0$$
+
+$$ \mathcal{N}\llbracket 1 \rrbracket = 1$$
+
+$$ \mathcal{N}\llbracket n\ 0 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket$$
+
+$$ \mathcal{N}\llbracket n\ 1 \rrbracket = 2 \cdot \mathcal{N}\llbracket n \rrbracket + 1$$
 
 ### Composición
 Definiciones composicionales
