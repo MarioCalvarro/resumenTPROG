@@ -26,7 +26,7 @@ Siendo la sintaxis:
 
 La función semántica es:
 
-$$ \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z} $$
+$$\require{stmaryrd} \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z} $$
 
 $$ \mathcal{N}\llbracket 0 \rrbracket = 0$$
 
