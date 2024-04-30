@@ -1,6 +1,4 @@
 # Tema 1. El lenguaje WHILE
-## Índice
-[[toc]]
 ## Sintaxis
 Tenemos los siguientes conjuntos:
 - Numerales: $\mathrm{n} \in \mathrm{Num}$.
@@ -78,3 +76,4 @@ $$
     s\ x &\text{si } x \neq y
 \end{cases}
 $$
+

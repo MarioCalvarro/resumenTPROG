@@ -6,3 +6,7 @@ header-includes:
 output:
     pdf_document
 ---
+
+## Índice
+[[toc]]
+
