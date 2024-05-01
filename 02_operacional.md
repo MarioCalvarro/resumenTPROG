@@ -1,6 +1,12 @@
 # Tema 2. Semántica operacional del lenguaje WHILE
 ## Semántica de paso largo
 ### Transiciones
+Configuraciones
+: - La *sentencia* $S$ se ejecuta desde el estado $s$: $\langle S, s \rangle$.
+- Estado $s'$ que se alcanza al terminar su ejecución.
+
+Transiciones ($\langle S, s \rangle \rightarrow s'$)
+:
 - Asignación:
 $$
 \left[ \mathrm{ass}_{\mathrm{ns}} \right] := \langle x := a, s \rangle
@@ -41,7 +47,7 @@ $$
     $$
     - Si no se cumple:
     $$
-    \langle \mathtt{while}\ b \mathtt{do}\ S, s \rangle \rightarrow s,\ \text{
+    \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{ff}} \right] := \langle \mathtt{while}\ b\ \mathtt{do}\ S, s \rangle \rightarrow s,\ \text{
     si } \mathcal{B}\llbracket b \rrbracket = \mathbf{ff}
     $$
 
@@ -96,4 +102,98 @@ $$
 $$
 
 ## Semántica de paso corto
+Transición
+: Primer paso de ejecución de $S$: $\langle S, s \rangle \Rightarrow \gamma$.
+- Si $\gamma = \langle S', s' \rangle$, ejecución *no terminada*.
+- Si $\gamma = s'$, ejecución *terminada*.
+
+Si para un $\langle S, s \rangle$ *no existe* ningún $\gamma. \langle S, s
+\rangle \Rightarrow \gamma$, la configuración estará *bloqueada*.
+
+- Asignación:
+$$
+\left[ \mathrm{ass}_{\mathrm{sos}} \right] := \langle x := a, s \rangle
+\Rightarrow s \left[ x \mapsto \mathcal{A}\llbracket a \rrbracket s \right]
+$$
+- *Skip*:
+$$
+\left[ \mathrm{skip}_{\mathrm{sos}} \right] := \langle \mathtt{skip}, s \rangle \Rightarrow s 
+$$
+- Composición:
+$$
+\begin{align*}
+\left[ \mathrm{comp}_{\mathrm{sos}}^{1} \right] &:= \frac{\langle S_1, s \rangle
+\Rightarrow \langle S_1', s' \rangle}{\langle S_1 \mathtt{;}
+S_2, s \rangle \Rightarrow \langle S_1' \mathtt{;} S_2, s' \rangle}
+\\
+\left[ \mathrm{comp}_{\mathrm{sos}}^{2} \right] &:= \frac{\langle S_1, s \rangle
+\Rightarrow s'}{\langle S_1 \mathtt{;}
+S_2, s \rangle \Rightarrow \langle S_2, s' \rangle}
+\end{align*}
+$$
+- Condicional:
+    - Si se cumple:
+    $$
+    \left[ \mathrm{if}_{\mathrm{sos}}^{\mathrm{tt}} \right] := \langle
+    \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle \Rightarrow
+    \langle S_1, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    \mathbf{tt}
+    $$
+    - Si no se cumple:
+    $$
+    \left[ \mathrm{if}_{\mathrm{sos}}^{\mathrm{tt}} \right] := \langle
+    \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle \Rightarrow
+    \langle S_2, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    \mathbf{ff}
+    $$
+- Bucle:
+    $$
+    \left[ \mathrm{while}_{\mathrm{sos}} \right] := \langle \mathtt{while}\ b\ \mathtt{do}\ S, s \rangle \Rightarrow\\ \langle
+    \mathtt{if}\ b\ \mathtt{then}\ \left( S,\ \mathtt{while}\ b\ \mathtt{do}\ S \right)\ \mathtt{else}\ \mathtt{skip}, s\rangle
+    $$
+
+Las secuencias de derivación pueden *terminar* (con éxito, alcanza un $s'$, o no) o *ciclar*.
+
+Inducción sobre la longitud de secuencia
+: 1. Demostrar la propiedad para las secuencias de longitud $0$.
+2. Asumiendo que se cumple para las secuencias de longitud $k$, probarla para
+   secuencias de longitud $k + 1$.
+
+### Propiedades
+Lema
+: Si tenemos $\langle S_1 \mathtt{;} S_2, s \rangle \Rightarrow^k s''$, entonces
+existen $s' \in \mathbf{State}$ y $k_1, k_2 \in \mathbb{N}$ tales que:
+$$
+\langle S_1, s \rangle \Rightarrow^{k_1} s' \land \langle S_2, s \rangle \Rightarrow^{k_2} s'', \text{ con } k = k_1 + k_2.
+$$
+
+Definición (Equivalencia semántica)
+: Decimos que dos sentencias $S_1$ y $S_2$ son semánticamente equivalentes si
+para todo estado $s$ se cumple que:
+- $\langle S_1, s \rangle \Rightarrow^* \gamma \Leftrightarrow \langle S_2, s
+    \rangle \Rightarrow^* \gamma$, para cada $\gamma$ terminal o bloqueada.
+- La secuencia que inicia con $\langle S_1, s \rangle$ es *infinita* si, y sólo
+    si, lo es la que inicia con $\langle S_2, s \rangle$.
+
+### Función semántica
+Definición (Significado de una sentencia)
+: Definimos la semántica operacional de paso corto de las sentencias a través de
+la siguiente función:
+$$
+\mathcal{S}_{sos} : \mathbf{Stm} \rightarrow \left( \mathbf{State}
+\hookrightarrow \mathbf{State} \right)\\
+
+\mathcal{S}_{sos}\llbracket S \rrbracket s = \begin{cases}
+    s', &\text{si } \langle S, s \rangle \Rightarrow^* s'\\
+    \mathtt{indefinido}, &\text{c.c } 
+\end{cases}
+$$
+
 ## Equivalencia
+Teorema
+: Para toda sentencia $S \in \mathbf{Stm}$ se cumple la siguiente relación:
+$$
+\mathcal{S}_{ns}\llbracket S \rrbracket = \mathcal{S}_{sos}\llbracket S \rrbracket
+$$
+Es decir, la semántica operacional de paso corto y paso largo con
+*equivalentes*.
