@@ -27,28 +27,28 @@ $$
     $$
     \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{\langle S_1, s \rangle
     \rightarrow s'}{\langle \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2,
-    s\rangle \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    s\rangle \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
     \mathbf{tt}
     $$
     - Si no se cumple:
     $$
     \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{ff}} \right] := \frac{\langle S_2, s \rangle
     \rightarrow s'}{\langle \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2,
-    s\rangle \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    s\rangle \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
     \mathbf{ff}
     $$
 - Bucle:
     - Si se cumple:
     $$
     \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{\langle
-    S, s \rangle \rightarrow s', \langle \mathtt{while}\ b\ \mathtt{do}\ S, s''
-    \rangle}{\langle \mathtt{while}\ b\ \mathtt{do}\ S, s\rangle \rightarrow
-    s''},\ \text{ si } \mathcal{B}\llbracket b \rrbracket = \mathbf{tt}
+    S, s \rangle \rightarrow s', \langle \mathtt{while}\ b\ \mathtt{do}\ S, s'
+    \rangle \rightarrow s''}{\langle \mathtt{while}\ b\ \mathtt{do}\ S, s\rangle \rightarrow
+    s''},\ \text{ si } \mathcal{B}\llbracket b \rrbracket s = \mathbf{tt}
     $$
     - Si no se cumple:
     $$
     \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{ff}} \right] := \langle \mathtt{while}\ b\ \mathtt{do}\ S, s \rangle \rightarrow s,\ \text{
-    si } \mathcal{B}\llbracket b \rrbracket = \mathbf{ff}
+    si } \mathcal{B}\llbracket b \rrbracket s = \mathbf{ff}
     $$
 
 Una sentencia $S$ es un estado $s$ tiene dos posibilidades:
@@ -136,14 +136,14 @@ $$
     $$
     \left[ \mathrm{if}_{\mathrm{sos}}^{\mathrm{tt}} \right] := \langle
     \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle \Rightarrow
-    \langle S_1, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    \langle S_1, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
     \mathbf{tt}
     $$
     - Si no se cumple:
     $$
     \left[ \mathrm{if}_{\mathrm{sos}}^{\mathrm{tt}} \right] := \langle
     \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle \Rightarrow
-    \langle S_2, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket =
+    \langle S_2, s \rangle,\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
     \mathbf{ff}
     $$
 - Bucle:
