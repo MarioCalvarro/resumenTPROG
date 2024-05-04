@@ -263,4 +263,81 @@ equivalente a `abort` mientras que en paso largo *sí*.
     En esta nueva definición estamos añadiendo el valor de $p$ al entorno
     anterior al que se declaró con lo que podemos realizar la llamada recursiva.
 
-### Ámbitos
+#### Variables y procedimientos estáticos
+- Para tener variables estáticas necesitamos modificar el estado y «separarlo»
+    en dos nuevas funciones distintas. Una guardará la *localización* de la
+    variable en un memoria abstracta mientras que la otra *asignará* un valor a
+    esa dirección. Con esto el estado será la composición de estas dos
+    funciones.
+
+- Funciones $\mathbf{Env}_V$:
+    : Esta funciones mapean variables de $\mathbf{Var}$ a posiciones de una memoria
+    abstracta, $\mathbf{Loc}$:
+    $$
+    \mathbf{Env}_V := \mathbf{Var} \rightarrow \mathbf{Loc}
+    $$
+- Ahora teniendo un "memoria" $\mathbf{Loc}$, necesitamos una forma de obtener
+    la siguiente dirección libre. Para ello usamos $new$ que es una función que
+    dada una dirección, nos devuelve la siguiente libre:
+    $$
+    \mathrm{new} : \mathbf{Loc} \rightarrow \mathbf{Loc}
+    $$
+
+- Funciones $\mathbf{Store}$:
+    : Estas funciones asignan a las direcciones de $\textbf{Loc}$ valores que
+    pueden tener las variables (en el caso de **WHILE**, enteros):
+    $$
+    \mathbf{Store} = \mathbf{Loc} \cup \left\{ \mathtt{next} \right\} \rightarrow \mathbb{Z}
+    $$
+    El elemento $\mathtt{next}$ representa la siguiente
+    dirección de memoria libre.
+
+- Con esto la semántica de las declaraciones de variables tendrá que ser
+    actualizada de la siguiente forma:
+    $$
+    \langle D_V, env_V, sto \rangle \rightarrow_D \left( env'_V, sto' \right)
+    $$
+- Con todo esto ya sí podemos dar las definiciones de la semántica de las
+    declaraciones de variables. De nuevo lo haremos de forma recursiva:
+    - Caso base:
+        $$
+        \left[ \mathrm{none}_{\mathrm{ns}} \right] := \langle \varepsilon,
+        env_V, sto \rangle \rightarrow_D \left( env_V, sto \right)
+        $$
+    - Caso recursivo: $\left[ \mathrm{var}_{\mathrm{ns}} \right] :=$
+        $$
+        \begin{gather*}
+        \frac{\langle D_V, env_V
+        \left[ x \mapsto l \right], sto\left[ l \mapsto v \right]\left[
+        \mathtt{next} \mapsto \mathrm{new}\ l \right] \rangle \rightarrow_D
+        \left( env'_V, sto' \right)}{\langle \mathtt{var}\ x := a;\ D_V, env_V, sto \rangle \rightarrow_D \left( env_V', sto' \right)},\\
+        \text{si } v = \mathcal{A}\llbracket a \rrbracket\left( sto \circ env_V \right) \text{ y } l = sto\ \mathtt{next}
+        \end{gather*}
+        $$
+
+- De forma intuitiva, la anterior definición nos indica varias cosas:
+    - El elemento $v$ nos da el valor de la nueva variable $x$ en el estado
+        anterior a su declaración mientras que $l$ nos indica la posición
+        que ocupará.
+    - En la premisa estamos actualizando recursivamente el entorno de las
+        variables añadiendo la posición que ocupará $x$ y el *store* con el
+        valor de $x$ (que se asociará a su posición $l$) así como con el nuevo
+        $\mathtt{next}$ que lo aportará la función $\mathrm{new}$, que hemos
+        definido antes.
+
+- Con todas estas definiciones ya estamos en disposición de definir el *entorno
+    de procedimientos* para este caso. Claramente será necesario el entorno de
+    variables. Por tanto:
+    $$
+    \mathbf{Env}_P = \mathbf{Pname} \hookrightarrow \mathbf{Stm} \times
+    \mathbf{Env}_V \times \mathbf{Env}_P
+    $$
+    Y, claro, la actualización tendrá que "recordar" también las variables
+    declaradas en ese momento: $\mathrm{udp}_P: \mathbf{Dec}_p \times
+    \mathbf{Env}_V \times \mathbf{Env}_P \rightarrow \mathbf{Env}_P$.
+    $$
+    \begin{cases}
+        \mathrm{udp}_P \left( \varepsilon, env_V, env_P \right) &= env_P\\
+        \mathrm{udp}_P \left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_V, env_P \right) &= \mathrm{udp}_P \left( D_P, env_V, env_P \left[ p \mapsto \left( S, env_V, env_P \right) \right] \right)\\
+    \end{cases}
+    $$
