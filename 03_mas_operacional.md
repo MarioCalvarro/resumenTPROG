@@ -142,6 +142,7 @@ equivalente a `abort` mientras que en paso largo *sí*.
     La función no es total para poder hacer llamadas a procedimientos
     todavía no declarados (por ejemplo, para permitir la recursividad
     mutua).
+
 - Si ahora tenemos un entorno $env_P \in \mathbf{Env}_P$ tenemos que las
     transiciones tendrán en cuenta el entorno de la siguiente manera:
     $$
@@ -226,5 +227,40 @@ equivalente a `abort` mientras que en paso largo *sí*.
         $$
         \left[ \mathrm{call}_{\mathrm{ns}}^{\mathrm{rec}} \right] := \frac{env_P \vdash \langle S, s \rangle \rightarrow s'}{env_P \vdash \langle \mathtt{call}\ p, s \rangle \rightarrow s'},\ \text{ si } env_P\ p = S
         $$
+
+#### Variables dinámicas y procedimientos estáticos
+- Entorno de procedimientos:
+    : Función que asocia los nombres de los procedimientos a sus cuerpos:
+    $$
+    \mathbf{Env}_P = \mathbf{Pname} \hookrightarrow \mathbf{Stm} \times
+    \mathbf{Env}_P
+    $$
+    Necesitamos recordar también los procedimientos *ya declarados* en el
+    momento que se declara uno nuevo (puesto que las llamadas son estáticas).
+    Ahora necesitamos una nueva definición para $\mathrm{udp}_P$ que será:
+    $$
+    \begin{cases}
+        \mathrm{udp}_P \left( \varepsilon, env_P \right) &= env_P\\
+        \mathrm{udp}_P \left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_P \right) &= \mathrm{udp}_P \left( D_P, env_P \left[ p \mapsto \left( S, env_P \right) \right] \right)\\
+    \end{cases}
+    $$
+    Lo que quiere decir que, cuando actualizamos el entorno para añadir $p$,
+    guardamos no solo su cuerpo sino también el entorno *en ese momento*.
+
+- Con esto ya podemos actualizar la definición semántica. En general será igual
+    a la vista en la anterior sección a excepción de las llamadas:
+    $$
+    \left[ \mathrm{call}_{\mathrm{ns}} \right] := \frac{env_P' \vdash \langle S, s \rangle \rightarrow s'}{env_P \vdash \langle \mathtt{call}\ p, s \rangle \rightarrow s'},\ \text{ si } env_P\ p = \left( S, env'_P \right)
+    $$
+    Sin embargo, en este caso las llamadas recursivas no las tenemos
+    directamente y tenemos que añadir una nueva derivación para el caso de que
+    una función se llame a sí misma (observar que cuando actualizamos el
+    entorno, no $p$ no tiene asociado el entorno en el que ha sido declarada
+    sino *el anterior*).
+    $$
+    \left[ \mathrm{call}_{\mathrm{ns}}^{\mathrm{rec}} \right] := \frac{env_P'\left[ p \mapsto \left( S, env'_P \right) \right] \vdash \langle S, s \rangle \rightarrow s'}{env_P \vdash \langle \mathtt{call}\ p, s \rangle \rightarrow s'},\ \text{ si } env_P\ p = \left( S, env'_P \right)
+    $$
+    En esta nueva definición estamos añadiendo el valor de $p$ al entorno
+    anterior al que se declaró con lo que podemos realizar la llamada recursiva.
 
 ### Ámbitos
