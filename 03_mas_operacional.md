@@ -1,0 +1,230 @@
+# Tema 3. Más sobre semántica operacional
+## Más allá del determinismo
+### Abortar cómputos
+- Para definir la semántica de la instrucción `abort` *no la definimos*. De esta
+forma cuando llegamos a ella tenemos `undefined` y el programa alcanza un estado
+`stuck`.
+
+- Con esta nueva instrucción encontramos una diferencia entre la semántica operacional de
+paso corto y paso largo. En el paso corto distinguimos entre bucles infinitos y
+terminaciones forzosas mientras que en la de paso largo solo importa la
+terminación correcta. En otras palabras, en paso corto `while true do skip` *no* es
+equivalente a `abort` mientras que en paso largo *sí*.
+
+### Indeterminación
+- Añadimos una nueva instrucción `S1 or S2` que ejecuta cualquiera (pero solo
+    una) de las dos sentencias de forma no determinista.
+
+- La definición de paso largo es
+    $$
+    \left[ \mathrm{or}_{\mathrm{ns}}^1 \right] := \frac{\langle S_1, s \rangle
+    \rightarrow s'}{\langle S_1\ \mathtt{or}\ S_2, s \rangle \rightarrow
+    s'}\qquad
+    \left[ \mathrm{or}_{\mathrm{ns}}^2 \right] := \frac{\langle S_2, s \rangle
+    \rightarrow s'}{\langle S_1\ \mathtt{or}\ S_2, s \rangle \rightarrow s'}
+    $$
+
+- Y la de paso corto
+    $$
+    \left[ \mathrm{or}_{\mathrm{sos}}^1 \right] := \langle S_1\ \mathtt{or}\
+    S_2, s \rangle \Rightarrow \langle S_1, s \rangle\qquad
+    \left[ \mathrm{or}_{\mathrm{sos}}^2 \right] := \langle S_1\ \mathtt{or}\
+    S_2, s \rangle \Rightarrow \langle S_2, s \rangle
+    $$
+
+- Esta instrucción nos aporta una nueva diferencia entre las dos semánticas
+    operacionales: el paso corto *mantiene* los ciclos en presencia de
+    indeterminación mientras que el largo los *elimina*.
+
+### Paralelismo
+- Extendemos ahora con la instrucción `S1 par S2` que ejecuta paralelamente las
+    dos sentencias, es decir, se intercalan las instrucciones de las dos.
+
+- El paso corto será:
+    $$
+    \begin{align*}
+    \left[ \mathrm{par}_{\mathrm{sos}}^1 \right] &:= \frac{\langle S_1, s \rangle
+    \Rightarrow \langle S_1', s' \rangle}{\langle S_1\ \mathtt{par}\ S_2, s
+    \rangle \Rightarrow \langle S_1'\ \mathtt{par}\ S_2, s' \rangle}\\
+
+    \left[ \mathrm{par}_{\mathrm{sos}}^2 \right] &:= \frac{\langle S_1, s \rangle
+    \Rightarrow s'}{\langle S_1\ \mathtt{par}\ S_2, s
+    \rangle \Rightarrow \langle S_2, s' \rangle}\\
+
+    \left[ \mathrm{par}_{\mathrm{sos}}^3 \right] &:= \frac{\langle S_2, s \rangle
+    \Rightarrow \langle S_2', s' \rangle}{\langle S_1\ \mathtt{par}\ S_2, s
+    \rangle \Rightarrow \langle S_1\ \mathtt{par}\ S_2', s' \rangle}\\
+
+    \left[ \mathrm{par}_{\mathrm{sos}}^2 \right] &:= \frac{\langle S_1, s \rangle
+    \Rightarrow s'}{\langle S_1\ \mathtt{par}\ S_2, s
+    \rangle \Rightarrow \langle S_1, s' \rangle}\\
+    \end{align*}
+    $$
+
+- Sin embargo, el paso largo no será capaz de definir esta construcción puesto
+    que solo capta el estado final y no los pasos intermedios, es decir, en el
+    mejor de los casos definirá una construcción en la que una sentencia se
+    ejecuta antes que la otra, pero no más.
+## Bloques y procedimientos
+### Bloques
+- Extendemos **WHILE** con bloques `begin Dv S end` donde tenemos declaraciones
+    de variables locales: `Dv ::= var x := a; Dv |  `. Debemos añadir que $D_V
+    \in \mathbf{Dec}_V$ que es la categoría sintáctica de *declaraciones de
+    variables*.  Con esto definimos el conjunto de variables declaradas en `Dv`:
+    $$
+    \begin{cases}
+    \mathrm{DV}\left( \mathtt{var}\ x := a; D_V  \right) &= \left\{ x \right\}
+    \cup \mathrm{DV}_V\\
+    \mathrm{DV}\left( \varepsilon \right) &= \emptyset
+    \end{cases}
+    $$
+
+- A la hora de definir la semántica de las declaraciones tenemos que tener en
+    cuenta que *no* son instrucciones. Por esto se tienen que definir de una
+    nueva forma. Además, para recuperar las variables globales que se han
+    redeclarado necesitamos la siguiente función:
+    $$
+    \left( s'\left[ X \mapsto s \right] x \right) := \begin{cases}
+        s\ x, &\text{si } x \in X\\
+        s'\ x, &\text{si } x \not\in X
+    \end{cases}
+    $$
+    Intuitivamente, $s'$ es el estado tras abandonar el bloque, $s$ es el de
+    antes de entrar y $X$ es el conjunto de variables globales redeclaradas.
+
+- Definimos ahora la semántica para las declaraciones de variables:
+    - Caso base:
+        $$
+        \left[ \mathrm{none}_{\mathrm{ns}} \right] := \langle \varepsilon, s
+        \rangle \rightarrow_D s
+        $$
+    - Caso recursivo:
+        $$
+        \left[ \mathrm{var}_{\mathrm{ns}} \right] := \frac{\langle D_V, s\left[
+        x \mapsto \mathcal{A}\llbracket a \rrbracket s \right] \rangle
+        \rightarrow_D s'}{\langle \mathtt{var}\ x := a; D_V, s \rangle
+        \rightarrow_D s'}
+        $$
+
+- Y para los bloques:
+    $$
+    \left[ \mathrm{block}_{\mathrm{ns}} \right] := \frac{\langle D_V, s \rangle
+    \rightarrow_{D} s', \langle S, s' \rangle \rightarrow s''}{\langle
+    \mathtt{begin}\ D_V\ S\ \mathtt{end}, s \rangle \rightarrow s''\left[
+    \mathrm{DV}\left( D_V \right) \mapsto s \right]}.
+    $$
+    Es decir, realizamos las declaraciones de las variables locales desde $s$ lo
+    que nos da $s'$, ejecutamos $S$ con $s'$ y obtenemos $s''$, pero al final
+    tenemos que devolver las variables globales a su estado original con la
+    función auxiliar que hemos visto antes.
+
+### Procedimientos
+- Presentamos ahora los *procedimientos*, otra nueva construcción que acompaña a
+    los bloques (que no los sustituye, es decir, son los bloques los que generan
+    ámbitos, no los procedimientos).
+
+- Tenemos que cambiar la sintaxis añadiendo una nueva instrucción `call p` y
+  modificando los bloques `begin Dv Dp S end`. Además, tenemos que añadir las
+  declaraciones de los procedimientos: `Dp ::= proc p is S; Dp | `. Con esto
+  tenemos que $D_P \in \mathbf{Dec}_P$ que es la categoría sintáctica de
+  *declaraciones de procedimientos* y $p \in \mathbf{Pname}$ que es el conjunto
+  de nombres de procedimientos.
+
+- Para definir la semántica extendida con los procedimientos tenemos tres
+    posibilidades distintas
+
+#### Variables y procedimientos dinámicos
+- Entorno de procedimientos:
+    : Función que asocia los nombres de los procedimientos a sus cuerpos:
+    $$
+    \mathbf{Env}_P = \mathbf{Pname} \hookrightarrow \mathbf{Stm}
+    $$
+    La función no es total para poder hacer llamadas a procedimientos
+    todavía no declarados (por ejemplo, para permitir la recursividad
+    mutua).
+- Si ahora tenemos un entorno $env_P \in \mathbf{Env}_P$ tenemos que las
+    transiciones tendrán en cuenta el entorno de la siguiente manera:
+    $$
+    env_P \vdash \langle S, s \rangle \rightarrow s' 
+    $$
+
+- Antes de definir la nueva semántica de largo paso, necesitamos una nueva
+    función auxiliar que actualice $\mathbf{Env}_P$ cuando entramos en un bloque
+    para añadir los nuevos procedimientos que se definan:
+    $$
+    \mathrm{upd}_P : \mathbf{Dec}_P \times \mathbf{Env}_P \rightarrow
+    \mathbf{Env}_P
+    $$
+    Lo hacemos recursivamente:
+    - Caso base:
+        $$
+        \mathrm{upd}_P\left( \varepsilon, env_P \right) = env_P
+        $$
+    - Caso recursivo:
+        $$
+        \mathrm{udp}_P\left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_P
+        \right) = \mathrm{udp}_P\left( D_P, \mathrm{udp}_P\left[ p \mapsto S \right] \right)
+        $$
+
+- Con todo esto, ya podemos actualizar la semántica de **WHILE**:
+    - Asignación:
+    $$
+    \left[ \mathrm{ass}_{\mathrm{ns}} \right] := env_P \vdash \langle x := a, s \rangle
+    \rightarrow s \left[ x \mapsto \mathcal{A}\llbracket a \rrbracket s \right]
+    $$
+    - *Skip*:
+    $$
+    \left[ \mathrm{skip}_{\mathrm{ns}} \right] := env_P \vdash \langle \mathtt{skip}, s \rangle \rightarrow s 
+    $$
+    - Composición:
+    $$
+    \left[ \mathrm{comp}_{\mathrm{ns}} \right] := \frac{env_P \vdash \langle S_1, s \rangle
+    \rightarrow s',\ env_P \vdash \langle S_2, s' \rangle \rightarrow s''}{env_P \vdash \langle S_1 \mathtt{;}
+    S_2, s \rangle \rightarrow s''}
+    $$
+    - Condicional:
+        - Si se cumple:
+        $$
+        \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{env_P
+        \vdash \langle S_1, s \rangle \rightarrow s'}{env_P \vdash \langle
+        \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle
+        \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
+        \mathbf{tt}
+        $$
+        - Si no se cumple:
+        $$
+        \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{ff}} \right] := \frac{env_P
+        \vdash \langle S_2, s \rangle \rightarrow s'}{env_P \vdash \langle
+        \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, s\rangle
+        \rightarrow s'},\ \text{ si } \mathcal{B}\llbracket b \rrbracket s =
+        \mathbf{ff}
+        $$
+    - Bucle:
+        - Si se cumple:
+        $$
+        \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{env_P \vdash \langle
+        S, s \rangle \rightarrow s', env_P \vdash \langle \mathtt{while}\ b\ \mathtt{do}\ S, s'
+        \rangle \rightarrow s''}{env_P \vdash \langle \mathtt{while}\ b\ \mathtt{do}\ S, s\rangle \rightarrow
+        s''},\\
+        \text{ si } \mathcal{B}\llbracket b \rrbracket s = \mathbf{tt}
+        $$
+        - Si no se cumple:
+        $$
+        \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{ff}} \right] := env_P \vdash \langle \mathtt{while}\ b\ \mathtt{do}\ S, s \rangle \rightarrow s,\
+        \text{ si } \mathcal{B}\llbracket b \rrbracket s = \mathbf{ff}
+        $$
+
+    - Bloque:
+        $$
+        \left[ \mathrm{block}_{\mathrm{ns}} \right] := \frac{\langle D_V, s \rangle
+        \rightarrow_{D} s',\ \mathrm{udp}_P\left( D_P, env_P \right) \vdash \langle S, s' \rangle \rightarrow s''}{env_P \vdash \langle
+        \mathtt{begin}\ D_V\ S\ \mathtt{end}, s \rangle \rightarrow s''\left[
+        \mathrm{DV}\left( D_V \right) \mapsto s \right]}
+        $$
+
+    - Llamada:
+        $$
+        \left[ \mathrm{call}_{\mathrm{ns}}^{\mathrm{rec}} \right] := \frac{env_P \vdash \langle S, s \rangle \rightarrow s'}{env_P \vdash \langle \mathtt{call}\ p, s \rangle \rightarrow s'},\ \text{ si } env_P\ p = S
+        $$
+
+### Ámbitos
