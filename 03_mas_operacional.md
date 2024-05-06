@@ -338,6 +338,98 @@ equivalente a `abort` mientras que en paso largo *sí*.
     $$
     \begin{cases}
         \mathrm{udp}_P \left( \varepsilon, env_V, env_P \right) &= env_P\\
-        \mathrm{udp}_P \left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_V, env_P \right) &= \mathrm{udp}_P \left( D_P, env_V, env_P \left[ p \mapsto \left( S, env_V, env_P \right) \right] \right)\\
+        \mathrm{udp}_P \left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_V, env_P \right) &= \mathrm{udp}_P \left( D_P, env_V, env_P \left[ p \mapsto \left( S, env_V, env_P \right) \right] \right)
     \end{cases}
     $$
+
+- De esta forma las transiciones de la semántica de paso largo serán de la
+    siguiente forma:
+    $$
+    env_V, env_P \vdash \langle S, sto \rangle \rightarrow sto'
+    $$
+
+- Con todo esto, ya podemos actualizar la semántica de **WHILE**:
+    - Asignación:
+    $$
+    \left[ \mathrm{ass}_{\mathrm{ns}} \right] := env_V, env_P \vdash \langle x := a, sto \rangle
+    \rightarrow sto\left[ l \mapsto v \right],\\ \text{si } l = env_V\ x \text{ y
+    } v = \mathcal{A}\llbracket a \rrbracket\left( sto \circ env_V \right)
+    $$
+    - *Skip*:
+    $$
+    \left[ \mathrm{skip}_{\mathrm{ns}} \right] := env_V, env_P \vdash \langle \mathtt{skip}, sto \rangle \rightarrow sto
+    $$
+    - Composición:
+    $$
+    \left[ \mathrm{comp}_{\mathrm{ns}} \right] := \frac{env_V, env_P \vdash
+    \langle S_1, sto \rangle \rightarrow sto',\ env_V, env_P \vdash \langle S_2,
+    sto' \rangle \rightarrow sto''}{env_V,env_P \vdash \langle S_1 \mathtt{;}
+    S_2, sto \rangle \rightarrow sto''}
+    $$
+    - Condicional:
+        - Si se cumple:
+        $$
+        \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{env_V, env_P
+        \vdash \langle S_1, sto \rangle \rightarrow sto'}{env_V, env_P \vdash \langle
+        \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2, sto\rangle
+        \rightarrow sto'},\\ \text{si } \mathcal{B}\llbracket b \rrbracket
+        \left( sto \circ env_V \right) =
+        \mathbf{tt}
+        $$
+        - Si no se cumple:
+        $$
+        \left[ \mathrm{if}_{\mathrm{ns}}^{\mathrm{ff}} \right] := \frac{env_V,
+        env_P \vdash \langle S_2, sto \rangle \rightarrow sto'}{env_V, env_P
+        \vdash \langle \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\ S_2,
+        sto\rangle \rightarrow sto'},\\ \text{si } \mathcal{B}\llbracket b
+        \rrbracket \left( sto \circ env_V \right) = \mathbf{ff}
+        $$
+    - Bucle:
+        - Si se cumple:
+        $$
+        \begin{gather*}
+        \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{tt}} \right] :=\frac{
+        \begin{gathered}
+        env_V, env_P \vdash \langle S, sto \rangle \rightarrow sto',\\
+        env_V, env_P \vdash \langle \mathtt{while}\ b\ \mathtt{do}\ S, sto'
+        \rangle \rightarrow sto''
+        \end{gathered}
+        }{env_P \vdash \langle \mathtt{while}\ b\
+        \mathtt{do}\ S, sto\rangle \rightarrow sto''},\\ \text{si }
+        \mathcal{B}\llbracket b \rrbracket \left( sto \circ env_V \right) =
+        \mathbf{tt}
+        \end{gather*}
+        $$
+        - Si no se cumple:
+        $$
+        \left[ \mathrm{while}_{\mathrm{ns}}^{\mathrm{ff}} \right] := env_V, env_P \vdash \langle \mathtt{while}\ b\ \mathtt{do}\ S, sto \rangle \rightarrow s,\
+        \text{ si } \mathcal{B}\llbracket b \rrbracket \left( sto \circ env_V \right) = \mathbf{ff}
+        $$
+
+    - Bloque:
+        $$
+        \left[ \mathrm{block}_{\mathrm{ns}} \right] := \frac{
+        \begin{gathered}
+        \langle D_V, env_V, sto \rangle \rightarrow_{D} \left( env'_V, sto' \right),\\
+        env'_V, env'_P \vdash \langle S, sto' \rangle \rightarrow sto''
+        \end{gathered}}{env_V, env_P \vdash \langle \mathtt{begin}\ D_V\ D_P\ S\
+        \mathtt{end}, sto \rangle \rightarrow sto''},\\
+        \text{si } env'_P = \mathrm{udp}_P \left( D_P, env_V', env_P \right)
+        $$
+        Es decir, actualizamos el entorno de las variables para obtener
+        $env_V'$ y $sto'$. Tras esto, actualizamos el entorno de procedimientos para
+        obtener $env'_P$. Con todo esto, ya sí ejecutamos $S$.
+
+    - Llamada:
+        - No recursiva:
+        $$
+        \left[ \mathrm{call}_{\mathrm{ns}} \right] := \frac{env_V', env_P \vdash \langle S, sto \rangle \rightarrow sto'}{env_V, env_P \vdash \langle \mathtt{call}\ p, sto \rangle \rightarrow sto'},\ \text{ si } env_P\ p = \left( S, env_V', env_P' \right)
+        $$
+        - Recursiva:
+        $$
+        \left[ \mathrm{call}_{\mathrm{ns}}^{\mathrm{rec}} \right] :=
+        \frac{env_V', env_P'\left[ p \mapsto \left( S, env_V', env_P' \right)
+        \right] \vdash \langle S, sto \rangle \rightarrow sto'}{env_V, env_P \vdash
+        \langle \mathtt{call}\ p, sto \rangle \rightarrow sto'},\\
+        \text{si } env_P\ p = \left( S, env_V', env_P' \right)
+        $$
