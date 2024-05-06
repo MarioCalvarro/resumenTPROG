@@ -164,7 +164,7 @@ equivalente a `abort` mientras que en paso largo *sí*.
     - Caso recursivo:
         $$
         \mathrm{udp}_P\left( \mathtt{proc}\ p\ \mathtt{is}\ S; D_P, env_P
-        \right) = \mathrm{udp}_P\left( D_P, \mathrm{udp}_P\left[ p \mapsto S \right] \right)
+        \right) = \mathrm{udp}_P\left( D_P, env_P\left[ p \mapsto S \right] \right)
         $$
 
 - Con todo esto, ya podemos actualizar la semántica de **WHILE**:
@@ -219,7 +219,7 @@ equivalente a `abort` mientras que en paso largo *sí*.
         $$
         \left[ \mathrm{block}_{\mathrm{ns}} \right] := \frac{\langle D_V, s \rangle
         \rightarrow_{D} s',\ \mathrm{udp}_P\left( D_P, env_P \right) \vdash \langle S, s' \rangle \rightarrow s''}{env_P \vdash \langle
-        \mathtt{begin}\ D_V\ S\ \mathtt{end}, s \rangle \rightarrow s''\left[
+        \mathtt{begin}\ D_V\ D_P\ S\ \mathtt{end}, s \rangle \rightarrow s''\left[
         \mathrm{DV}\left( D_V \right) \mapsto s \right]}
         $$
 
