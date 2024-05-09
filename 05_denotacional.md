@@ -102,4 +102,16 @@ $$
 $$
 Decimos que $\bot$ *no contiene información*.
 
+Proposición: (Unicidad del elemento mínimo)
+: Si un $\left( D, \sqsubseteq \right)$ tiene elemento mínimo, entonces este es
+único.
+
+Lema: (Elemento mínimo de $\mathbf{State} \hookrightarrow \mathbf{State}$)
+: El conjunto $\left( \mathbf{State} \hookrightarrow \mathbf{State}, \sqsubseteq
+\right)$ es parcialmente ordenado y la función definida como 
+$$
+\bot\ s = \mathrm{undef},\ \forall s \in \mathbf{State}
+$$
+es su elemento mínimo.
+
 ## Equivalencia entre la semántica operacional y la denotacional
