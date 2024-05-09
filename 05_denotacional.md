@@ -38,7 +38,12 @@ Como se puede observar, tenemos dos funciones auxiliares $\mathrm{cond}$ y
 $\mathrm{FIX}$ que debemos definir a su vez. Empezamos con $\mathrm{cond}$ que
 tiene como tipo
 $$
-\mathrm{cond}: \left( \mathbf{State} \rightarrow \mathbf{T} \right) \times \left( \mathbf{State} \hookrightarrow \mathbf{State} \right) \times \left( \mathbf{State} \hookrightarrow \mathbf{State} \right) \rightarrow \left( \mathbf{State} \hookrightarrow \mathbf{State} \right)
+\begin{align*}
+\mathrm{cond}: \left( \mathbf{State} \rightarrow \mathbf{T} \right) \times
+\left( \mathbf{State} \hookrightarrow \mathbf{State} \right) \times \left(
+\mathbf{State} \hookrightarrow \mathbf{State} \right)\\ 
+\rightarrow \left( \mathbf{State} \hookrightarrow \mathbf{State} \right)
+\end{align*}
 $$
 y se define como
 $$
@@ -233,11 +238,60 @@ correctamente los puntos fijos en nuestra semántica:
 
 ## Corrección de la definición
 Tras construir toda la estructura auxiliar, volvemos al propósito inicial del
-capítulo, definir *composicionalmente* y *correctamente* la semántica denotacional.
-Es por esto que ahora debemos asegurarnos que las funciones que utilizamos en
-la definición de la semántica sean continuas.
+capítulo, definir *composicionalmente* y *correctamente* la semántica
+denotacional. Es por esto que ahora debemos asegurarnos que nuestro dominio sea
+un *ccpo* y que las funciones que utilizamos en la definición de la semántica
+sean continuas.
 
-Lema: (Continuidad del condicional)
-: Sea $g_0: \mathbf{State} \hookrightarrow \mathbf{State}$ y $p $
+Proposición: (Dominio de funciones continuas)
+: Sean $D$ y $D'$ dos *ccpo*'s, si definimos $\left( D \rightarrow D',
+\sqsubseteq_F \right)$ tomando solo las funciones continuas entre $D$ y $D'$ y
+con
+$$
+f_1 \sqsubseteq_F f_2 := \forall d \in D : \left( f_1\ d \right) \sqsubseteq
+\left( f_2 d \right)
+$$
+tenemos que $\left( D \rightarrow D', \sqsubseteq_F \right)$ es un *ccpo*.
+
+Proposición: (Continuidad de $\mathrm{FIX}$)
+: El funcional $\mathrm{FIX}: \left( D \rightarrow D \right) \rightarrow D$ es
+continuo.
+
+Proposición: (Continuidad del condicional)
+: La función $F: \left( \mathbf{State} \hookrightarrow \mathbf{State} \right) \rightarrow \left( \mathbf{State} \hookrightarrow \mathbf{State} \right)$ definida como:
+$$
+F\ g = \mathrm{cond}\left( p, g, g_0 \right),\ g_0 \in \mathbf{State}
+\hookrightarrow \mathbf{State}
+$$
+es continua.
+
+Proposición: (Continuidad funcional composición)
+: La función $F: \left( \mathbf{State} \hookrightarrow \mathbf{State} \right) \rightarrow \left( \mathbf{State} \hookrightarrow \mathbf{State} \right)$ definida como:
+$$
+F\ g = g \circ g_0,\ g_0 \in \mathbf{State} \hookrightarrow \mathbf{State}
+$$
+es continua.
+
+Y con esto tenemos el resultado que buscábamos.
+
+Proposición: (Corrección semántica denotacional)
+: La función semántica $\mathcal{S}_{\mathrm{ds}}$ es total, es decir, estar
+correctamente definida.
+
+### Propiedades de la semántica
+Definición: (Equivalencia semántica)
+: Decimos que dos sentencias $S_1$ y $S_2$ son semánticamente equivalentes si se
+cumple que
+$$
+\mathcal{S}_{\mathrm{ds}}\llbracket S_1 \rrbracket =
+\mathcal{S}_{\mathrm{ds}}\llbracket S_2 \rrbracket.
+$$
+
 
 ## Equivalencia entre la semántica operacional y la denotacional
+Teorema: (Equivalencia entre semántica operacional y denotacional)
+: Para toda sentencia del lenguaje **WHILE** tenemos que
+$$
+\mathcal{S}_{\mathrm{ds}}\llbracket S \rrbracket =
+\mathcal{S}_{\mathrm{sos}}\llbracket S \rrbracket.
+$$
