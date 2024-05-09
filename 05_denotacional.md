@@ -114,4 +114,130 @@ $$
 $$
 es su elemento mínimo.
 
+Con toda esta nueva información podemos actualizar la definición de
+$\mathrm{FIX}$ para que sea correcta:
+- $\mathrm{FIX}\ F$ es un punto fijo, es decir, $F\left( \mathrm{FIX}\ F \right)
+    = \mathrm{FIX}\ F$.
+- $\mathrm{FIX}\ F$ es el punto fijo *mínimo*, es decir,
+    $$
+    \text{si } F\ g = g \Rightarrow \mathrm{FIX}\ F \sqsubseteq q.
+    $$
+
+### Conjuntos parcialmente ordenados completos
+Hasta este momento hemos conseguido obtener la unicidad del punto fijo del
+funcional, sin embargo, todavía no sabemos si existe tal punto fijo. Por esta
+razón, necesitamos restringir todavía más el conjunto de funcionales con el que
+estamos tratando.
+
+Definición: (Cotas superiores)
+: Sea $\left( D, \sqsubseteq \right)$ un conjunto parcialmente ordenado, $Y
+\subset D$ y $d \in D$. Diremos que $d$ es un *cota superior* de $Y$ si
+$$
+\forall d' \in Y,\ d' \sqsubseteq d
+$$
+Y será la cota superior *mínima* si
+$$
+\forall d'' \text{ cota superior de } Y \Rightarrow d \sqsubseteq d''.
+$$
+Esta cota superior mínima (*lub*) se denota, si existe, como $\bigsqcup Y$.
+
+Definición: (Cadenas)
+: En las condiciones anteriores diremos que $Y$ es una *cadena* si
+$$
+\forall d_1, d_2 \in Y,\ d_1 \sqsubseteq d_2 \text{ ó } d_2 \sqsubseteq d_1.
+$$
+
+Definición: (Orden y retículo completo por cadenas)
+: - Decimos que $\left( D, \sqsubseteq \right)$ es un *orden completo por
+cadenas* (*ccpo*) si para toda cadena $Y \subset D$, existe una cota superior
+mínima $\bigsqcup_{} Y$.
+- El conjunto $D$ será un *retículo completo* si todo $Y \subset D$ tiene
+    $\bigsqcup_{} Y$.
+
+Proposición: (Elemento mínimo de un *ccpo*)
+: Si $\left( D, \sqsubseteq \right)$ es un *ccpo*, entonces existe un elemento
+mínimo tal que
+$$
+\bot = \bigsqcup_{} \emptyset.
+$$
+
+Proposición:
+: El conjunto $\left( \mathbf{State} \hookrightarrow \mathbf{State}, \sqsubseteq \right)$ es un *ccpo*.
+
+### Funciones continuas
+En esta sección trataremos con *ccpo*s, por tanto, cada vez que aparezca un
+conjunto $D$, $D'$, etc. asumiremos que es tal y sus operadores de orden serán,
+respectivamente, $\sqsubseteq, \sqsubseteq'$, etc.
+
+Definición: (Monotonía)
+: Diremos que una función $f : D \rightarrow D'$ es monótona si
+$$
+\forall d_1, d_2 \in D : d_1 \sqsubseteq d_2 \Rightarrow f\ d_1 \sqsubseteq' f\
+d_2.
+$$
+
+Proposición: (Propiedades monotonía)
+: Sea $f: D \rightarrow D'$ y $f': D' \rightarrow D''$ ambas monótonas, entonces
+se cumple que
+- La composición también es monótona:
+    $$
+    f' \circ f : D \rightarrow D'' \text{ es monótona.}
+    $$
+
+- Se conservan las cadenas. Sea $Y \subset D$ una cadena, entonces $f\ Y =
+    \left\{ f\ d \mid d \in Y \right\}$ es una cadena de $D'$ y
+    $$
+    \bigsqcup\mathclap{'}  f\ Y \sqsubseteq' f\left( \bigsqcup_{} Y \right).
+    $$
+
+*Observación*:
+: A pesar de lo que se pueda pensar, la última propiedad de la monotonía no nos
+permite decir que el elemento mínimo de aplicar la $f$ a todos los puntos de $Y$
+sea *igual* a aplicar $f$ al elemento mínimo de $Y$. Solo nos interesaran las
+funciones que *sí* lo conserven. De aquí la siguiente definición.
+
+Definición: (Continuidad)
+: Diremos que $f: D \rightarrow D'$ es *continua* si es monótona y para toda cadena no vacía $Y \subset
+D$ se cumple que
+$$
+\bigsqcup_{}\mathclap{'} f\ Y = f\left( \bigsqcup_{} Y \right).
+$$
+Si además se cumple para la vacía, es decir, $\bot = f\ \bot$ diremos que es
+*estricta*.
+
+Proposición: (Composición continua)
+: Sea $f: D \rightarrow D'$ y $f': D' \rightarrow D''$ ambas continuas, entonces
+$$
+f' \circ f: D \rightarrow D''
+$$
+también es continua.
+
+Teorema: (Caracterización del elemento mínimo de $f$)
+: Sea $f: D \rightarrow D$ una función continua tal que $D$ (*ccpo*) tiene elemento mínimo $\bot$. Entonces
+$$
+\mathrm{FIX}\ f = \bigsqcup_{} \left\{ f^n\ \bot \mid n \in \mathbb{N} \right\}
+$$
+es un elemento de $D$ y, de hecho, es el punto fijo mínimo de $f$.
+
+*Observaciones*
+: - En el anterior teorema hemos usado como notación $f^0 = \mathrm{id}$ y
+$f^{n+1} = f \circ f^n$ para $n > 0$.
+- Cabe destacar que, como $f^n\ \bot \sqsubseteq f^{n+1} \bot,\ \forall n \in \mathbb{N}$ (al ser continua) el conjunto $\left\{ f^n \bot \right\}$ es realmente una cadena.
+
+### Resumen sección
+Para concluir la sección enumeraré las propiedades que deseamos para manejar
+correctamente los puntos fijos en nuestra semántica:
+- Será necesario que el dominio en el que trabajamos sea un *ccpo*.
+- Las funciones que tratemos tendrán que ser *continuas* en ese *ccpo*.
+- Usaremos los *puntos fijos mínimos* de estas funciones.
+
+## Corrección de la definición
+Tras construir toda la estructura auxiliar, volvemos al propósito inicial del
+capítulo, definir *composicionalmente* y *correctamente* la semántica denotacional.
+Es por esto que ahora debemos asegurarnos que las funciones que utilizamos en
+la definición de la semántica sean continuas.
+
+Lema: (Continuidad del condicional)
+: Sea $g_0: \mathbf{State} \hookrightarrow \mathbf{State}$ y $p $
+
 ## Equivalencia entre la semántica operacional y la denotacional
