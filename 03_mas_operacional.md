@@ -423,7 +423,7 @@ equivalente a `abort` mientras que en paso largo *sí*.
     - Llamada:
         - No recursiva:
         $$
-        \left[ \mathrm{call}_{\mathrm{ns}} \right] := \frac{env_V', env_P \vdash \langle S, sto \rangle \rightarrow sto'}{env_V, env_P \vdash \langle \mathtt{call}\ p, sto \rangle \rightarrow sto'},\ \text{ si } env_P\ p = \left( S, env_V', env_P' \right)
+        \left[ \mathrm{call}_{\mathrm{ns}} \right] := \frac{env_V', env_P' \vdash \langle S, sto \rangle \rightarrow sto'}{env_V, env_P \vdash \langle \mathtt{call}\ p, sto \rangle \rightarrow sto'},\ \text{ si } env_P\ p = \left( S, env_V', env_P' \right)
         $$
         - Recursiva:
         $$
