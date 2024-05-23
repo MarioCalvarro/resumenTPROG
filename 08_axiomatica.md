@@ -74,8 +74,8 @@ P \right\} \mathtt{while}\ b\ \mathtt{do}\ S \left\{ ¬\mathcal{B}\llbracket b
 \rrbracket \land P \right\}}\\
 
 \left[ \mathrm{cons}_{\mathrm{p}} \right] &:= \frac{\left\{ P' \right\} S
-\left\{ Q' \right\}}{\left\{ P \right\} S \left\{ Q \right\}},\ \text{donde } P
-\Rightarrow P' \text{ y } Q' \Rightarrow Q.\\
+\left\{ Q' \right\}}{\left\{ P \right\} S \left\{ Q \right\}},\ \text{donde } P'
+\Rightarrow P \text{ y } Q \Rightarrow Q'.\\
 \end{align*}
 $$
 Daré un par de aclaraciones que considero convenientes:
